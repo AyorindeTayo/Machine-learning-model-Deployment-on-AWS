@@ -201,8 +201,6 @@ If permissions are missing:
 
 ## Step 8: Deploy to Kubernetes Using EKS
 
-# Deployment and Service Configuration for EKS
-
 ## Deployment YAML File
 
 The `deployment.yaml` file defines the deployment of your machine learning model on Kubernetes. This includes the number of replicas (pods) and the container image to use.
@@ -288,17 +286,13 @@ kubectl apply -f service.yaml
 The `EXTERNAL-IP` field in the service output will show the public IP address or DNS name for accessing your model's API.
 
 
-4. **Apply the Deployment:**
-   ```bash
-   kubectl apply -f deployment.yaml
-   ```
 
-5. **Expose the Service:**
+4. **Expose the Service:**
    ```bash
    kubectl expose deployment ml-model-deployment --type=LoadBalancer --port=8000
    ```
 
-6. **Get the External IP:**
+5. **Get the External IP:**
    ```bash
    kubectl get services
    ```
