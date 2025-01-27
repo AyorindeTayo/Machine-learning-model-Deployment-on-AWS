@@ -201,38 +201,92 @@ If permissions are missing:
 
 ## Step 8: Deploy to Kubernetes Using EKS
 
-1. **Create an EKS Cluster:**
+# Deployment and Service Configuration for EKS
+
+## Deployment YAML File
+
+The `deployment.yaml` file defines the deployment of your machine learning model on Kubernetes. This includes the number of replicas (pods) and the container image to use.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-model-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ml-model
+  template:
+    metadata:
+      labels:
+        app: ml-model
+    spec:
+      containers:
+      - name: ml-model
+        image: <account_id>.dkr.ecr.<region>.amazonaws.com/ml-model-api:latest
+        ports:
+        - containerPort: 8000
+```
+
+## Service YAML File
+
+The `service.yaml` file is required to expose your deployed application and allow external access to the machine learning model running on Kubernetes.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-model-service
+spec:
+  selector:
+    app: ml-model
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
+```
+
+### Explanation
+
+1. **Deployment YAML File**:
+   - `replicas`: Specifies the number of pods to run for high availability.
+   - `image`: The container image stored in Amazon ECR that contains your machine learning model API.
+   - `containerPort`: The port the container listens on (e.g., 8000).
+
+2. **Service YAML File**:
+   - `kind: Service`: Defines the resource as a service.
+   - `selector`: Links the service to the pods labeled as `app: ml-model`.
+   - `ports`: Maps external traffic from port 80 to the container's port 8000.
+   - `type: LoadBalancer`: Creates a load balancer to expose the service externally.
+
+## Applying the Configuration
+
+To deploy the `deployment.yaml` and `service.yaml` files to your Kubernetes cluster, use the following commands:
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
+
+## Verifying the Deployment
+
+1. **Check the Deployment Status**:
    ```bash
-   eksctl create cluster --name ml-cluster --region <region> --nodes 2
+   kubectl get deployments
+   ```
+2. **Check the Pods**:
+   ```bash
+   kubectl get pods
+   ```
+3. **Check the Service**:
+   ```bash
+   kubectl get services
    ```
 
-2. **Update kubeconfig:**
-   ```bash
-   aws eks --region <region> update-kubeconfig --name ml-cluster
-   ```
+The `EXTERNAL-IP` field in the service output will show the public IP address or DNS name for accessing your model's API.
 
-3. **Create a Deployment YAML File:**
-   ```yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: ml-model-deployment
-   spec:
-     replicas: 2
-     selector:
-       matchLabels:
-         app: ml-model
-     template:
-       metadata:
-         labels:
-           app: ml-model
-       spec:
-         containers:
-         - name: ml-model
-           image: <account_id>.dkr.ecr.<region>.amazonaws.com/ml-model-api:latest
-           ports:
-           - containerPort: 8000
-   ```
 
 4. **Apply the Deployment:**
    ```bash
