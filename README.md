@@ -1,4 +1,4 @@
-# Machien-learning-Deployment-on-AWS
+# Machine-learning-Deployment-on-AWS
 Containerization of ML model for KUBERNETES EKS deployment on AWS
 # Machine Learning Model Deployment to AWS EKS
 
