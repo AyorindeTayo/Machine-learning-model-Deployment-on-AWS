@@ -102,47 +102,14 @@ If permissions are missing:
    Write your training script (e.g., `train.py`) to preprocess data and train the model.
 
 2. **Save the Model in ONNX Format:**
-   ```python
-   import onnx
-   from sklearn.linear_model import LogisticRegression
-   from skl2onnx import convert_sklearn
-   from skl2onnx.common.data_types import FloatTensorType
+  
 
-   # Example: Train Logistic Regression and save as ONNX
-   model = LogisticRegression()
-   model.fit(X_train, y_train)
 
-   initial_type = [('float_input', FloatTensorType([None, X_train.shape[1]]))]
-   onnx_model = convert_sklearn(model, initial_types=initial_type)
-   with open("model.onnx", "wb") as f:
-       f.write(onnx_model.SerializeToString())
-   ```
-
----
 
 ## Step 5: Wrap Model in a Flask API
 
 1. **Create `app.py`:**
-   ```python
-   from flask import Flask, request, jsonify
-   import onnxruntime as rt
-   import numpy as np
 
-   app = Flask(__name__)
-
-   session = rt.InferenceSession("model.onnx")
-   input_name = session.get_inputs()[0].name
-
-   @app.route('/predict', methods=['POST'])
-   def predict():
-       data = request.json['data']
-       np_data = np.array(data, dtype=np.float32)
-       result = session.run(None, {input_name: np_data})
-       return jsonify(result=result[0].tolist())
-
-   if __name__ == "__main__":
-       app.run(host="0.0.0.0", port=8000)
-   ```
 
 2. **Test Locally:**
    ```bash
