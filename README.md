@@ -1,3 +1,7 @@
+![Imgur](https://imgur.com/4RR3pjF.png)
+
+
+
 # Machine-learning-Deployment-on-AWS
 Containerization of ML model for KUBERNETES EKS deployment on AWS
 # Machine Learning Model Deployment to AWS EKS
